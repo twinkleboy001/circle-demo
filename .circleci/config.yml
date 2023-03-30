@@ -11,11 +11,26 @@ jobs:
           fingerprints:
             - "3c:42:7c:28:f5:f3:1c:c7:92:bb:55:85:bf:ca:7e:5c"
       - checkout
+      - restore_cache:
+          keys:
+            - dependencies_troy
       - run: echo "A first hello"
       - run: npm -v
       - run:
           name: Install
           command: yarn install
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependencies_troy
       - run:
           name: Build
           command: yarn build
+      - run:
+          name: Prepare shell commands
+          # shell chomd +x 赋予执行权限
+          # 执行shell脚本
+          command: chmod +x scripts/deploy.sh
+      - run:
+          name: Run Deploy to Github pages
+          command: ./scripts/deploy.sh
